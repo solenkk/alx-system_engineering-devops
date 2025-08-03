@@ -1,12 +1,3 @@
 #!/bin/bash
 # Count the number of directories in PATH
-
-# Replace multiple colons with single colon, remove leading/trailing colons
-clean_path=$(echo "$PATH" | sed 's/::*/:/g; s/^://; s/:$//')
-
-# Count the directories by converting colons to newlines and counting lines
-if [ -z "$clean_path" ]; then
-    echo 0
-else
-    echo "$clean_path" | tr ':' '\n' | wc -l | tr -d ' '
-fi
+echo "$PATH" | tr ':' '\n' | grep -c "^"
