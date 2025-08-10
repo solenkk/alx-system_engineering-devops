@@ -30,3 +30,5 @@ graph TD
     WS1 --> DB[Primary DB]
     WS2 --> DB
     DB --> REPLICA[Replica DB]
+
+https://imgur.com/a/uzl7qPv
