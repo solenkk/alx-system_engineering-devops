@@ -1,0 +1,60 @@
+Scenario
+A user opens their browser and types:
+www.foobar.com
+
+The request goes to a single server (IP: 8.8.8.8) running:
+
+Nginx (web server)
+
+PHP (app server)
+
+MySQL (database)
+
+How It Works
+DNS Lookup
+
+The browser asks DNS: "What’s the IP of www.foobar.com?"
+
+DNS replies: 8.8.8.8 (an A Record).
+
+Request Reaches the Server
+
+The browser sends an HTTP/HTTPS request to 8.8.8.8.
+
+Nginx (on port 80 or 443) receives the request.
+
+Nginx Handles the Request
+
+If it's a static file (HTML, CSS, JS), Nginx serves it directly.
+
+If it's dynamic (e.g., PHP), Nginx forwards it to PHP-FPM (PHP processor).
+
+PHP Processes the Request
+
+Runs code (e.g., login, search).
+
+If needed, it queries MySQL (database) to fetch/save data.
+
+Response Sent Back to User
+
+PHP generates HTML → Nginx sends it back → Browser displays the page.
+
+Problems With This Setup
+❌ Single Point of Failure (SPOF)
+
+If the server crashes, the whole site goes down.
+
+❌ Downtime During Updates
+
+Restarting Nginx/PHP/MySQL means the site is temporarily unavailable.
+
+❌ Can’t Handle High Traffic
+
+Only one server = limited CPU/RAM. Too many users = slow or crash.
+
+Simple Fixes (Next Steps)
+✅ Add a Backup Server → Avoid SPOF.
+✅ Use Cloud Services → Auto-scaling for traffic spikes.
+✅ Add a Load Balancer → Distribute traffic across multiple servers.
+
+This is a basic but functional setup. For bigger sites, you’d need improvements! 🚀
