@@ -1,0 +1,99 @@
+# 🛠️ Three-Server Web Infrastructure for `www.foobar.com`  
+*A secure, scalable, and monitored architecture with HAProxy, MySQL replication, and firewalls.*
+
+---
+
+## 📜 **Overview**  
+This infrastructure hosts `www.foobar.com` across three servers, improving upon the previous design by:  
+✅ **Encrypted traffic** (SSL/TLS)  
+✅ **Firewall-protected layers**  
+✅ **Real-time monitoring**  
+✅ **Load-balanced redundancy**  
+
+---
+
+## 🧩 **Components**  
+
+### 1. **Load Balancer (HAProxy)**  
+- **Role**: Distributes traffic evenly (Round Robin/Least Connections).  
+- **SSL Termination**: Decrypts HTTPS at LB (trade-off: internal traffic is unencrypted).  
+- **Redundancy**: Active-Active mode (both backend servers handle requests).  
+
+### 2. **Web & Application Servers (x2)**  
+- **Stack**:  
+  - Nginx (static content).  
+  - Gunicorn/uWSGI (dynamic content).  
+  - Identical codebase (synced via Git/CD).  
+- **Why**: Redundancy + load distribution.  
+
+### 3. **Database Cluster (MySQL)**  
+| Node      | Role                |  
+|-----------|---------------------|  
+| **Primary** | Handles all writes. |  
+| **Replica** | Read-only queries.  |  
+- **Replication**: Asynchronous (potential lag).  
+
+### 4. **Firewalls (x3)**  
+| Firewall | Placement                     | Rules                          |  
+|----------|-------------------------------|--------------------------------|  
+| **FW1**  | Internet ↔ LB                 | Allow HTTPS (443), block else. |  
+| **FW2**  | LB ↔ Web Servers              | Allow HTTP/HTTPS (80/443).     |  
+| **FW3**  | Web Servers ↔ DB              | Allow MySQL (3306).            |  
+
+### 5. **SSL Certificate**  
+- **Why**: Encrypts user ↔ LB traffic (HTTPS).  
+- **Implementation**: Let’s Encrypt on HAProxy.  
+
+### 6. **Monitoring Clients**  
+- **Tools**: Prometheus (metrics), ELK (logs), Grafana (dashboards).  
+- **Track**: CPU, RAM, QPS, error rates.  
+
+---
+
+## 🔄 **Request Flow**  
+1. User → `https://www.foobar.com` → DNS resolves to LB IP.  
+2. **FW1** filters traffic → LB decrypts SSL → routes to backend.  
+3. **FW2** allows traffic → Nginx (static) or App Server (dynamic).  
+4. **FW3** permits DB queries → Primary/Replica responds.  
+5. Response → LB → re-encrypted → user.  
+
+---
+
+## ✅ **Benefits**  
+- **Security**: HTTPS + layered firewalls.  
+- **Scalability**: LB distributes load; DB replica handles reads.  
+- **Monitoring**: Real-time alerts for failures.  
+
+---
+
+## ⚠️ **Issues & Mitigations**  
+
+| **Issue**                  | **Risk**                          | **Mitigation**                          |  
+|----------------------------|-----------------------------------|-----------------------------------------|  
+| **SPOF (LB/Primary DB)**    | Single failure → downtime.        | Add LB replica + MySQL failover (ProxySQL). |  
+| **Unencrypted LB→Backend**  | Internal MITM attacks.            | Enable end-to-end SSL.                  |  
+| **DB Write Bottleneck**     | Primary DB overload.              | Sharding or read-write splitting.       |  
+| **Monitoring Blind Spots**  | Missed alerts if agent fails.     | Multi-tool checks + synthetic monitoring. |  
+| **Identical Servers**       | Compromise spreads easily.        | Isolate roles (e.g., separate app/db).  |  
+
+---
+
+## 🚀 **Future Improvements**  
+- **End-to-End SSL**: Encrypt LB ↔ backend traffic.  
+- **Auto-Scaling**: Kubernetes/cloud-based scaling.  
+- **Disaster Recovery**: Automated backups + multi-region DB.  
+- **Redis Cache**: Reduce DB load for frequent queries.  
+
+---
+
+## 📊 **Diagram**  
+*(Replace with your architecture diagram)*  
+![Infrastructure Diagram](https://via.placeholder.com/800x400.png?text=Three-Server+Web+Infrastructure)  
+
+---
+
+## 📝 **Usage**  
+```bash
+# Example: Deploy HAProxy with SSL  
+sudo apt install haproxy certbot  
+certbot certonly --standalone -d www.foobar.com  
