@@ -1,0 +1,21 @@
+# 🚀 Scale-Up Web Infrastructure for `www.foobar.com`
+*A high-performance, fault-tolerant architecture with dedicated servers for web, app, and database layers.*
+
+---
+
+## 🎯 **Goal**
+Handle increased traffic, eliminate single points of failure (SPOF), and optimize performance by:
+- **Isolating components** (Web/App/DB servers).  
+- **Load balancer redundancy** (Active-Active cluster).  
+- **Independent scaling** per layer.  
+
+---
+
+## 📐 **Infrastructure Overview**
+```mermaid
+graph TD
+    A[User] --> B[DNS: www.foobar.com]
+    B --> C[HAProxy Cluster (LB1 + LB2)]
+    C --> D[Web Servers: Nginx]
+    D --> E[App Servers: Node.js/Python/PHP]
+    E --> F[DB Cluster: MySQL Primary + Replica]
