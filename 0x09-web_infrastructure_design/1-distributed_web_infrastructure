@@ -1,0 +1,78 @@
+# 🚀 Distributed Three-Server Web Infrastructure for `www.foobar.com`
+
+A **high-availability**, **scalable**, and **secure** web infrastructure designed to handle traffic efficiently while minimizing downtime.
+
+## 🌐 **Architecture Overview**
+![Diagram](https://via.placeholder.com/800x400.png?text=Three-Server+Web+Infrastructure+Diagram) *(Replace with your actual diagram)*
+
+### **🖥️ Core Components**
+| Component               | Technology Used          | Purpose |
+|-------------------------|--------------------------|---------|
+| **DNS**                 | A/CNAME Record           | Routes `www.foobar.com` to Load Balancer |
+| **Load Balancer**       | HAProxy + Keepalived     | Distributes traffic, failover support |
+| **Web Servers (x2)**    | Nginx + PHP-FPM / Node.js | Handles static & dynamic requests |
+| **Database**           | MySQL (Primary + Replica) + ProxySQL | Read/write splitting, failover |
+| **Firewall**           | UFW/IPtables             | Restricts access to essential ports |
+| **Monitoring**         | Prometheus + Grafana + ELK | Metrics, logging, alerts |
+
+---
+
+## 🔧 **How It Works**
+
+### 1. **DNS Resolution**
+- User visits `www.foobar.com` → DNS resolves to the **Load Balancer’s IP** (A/CNAME record).
+
+### 2. **Load Balancing (HAProxy)**
+- Uses **Round Robin** or **Least Connections** algorithm.
+- **Active-Active** mode (both backend servers handle requests).
+- **Failover:** If one LB fails, Keepalived promotes the backup.
+
+### 3. **Web/App Servers**
+- **Server 1:** Nginx (static files) + PHP-FPM (backend logic).
+- **Server 2:** Node.js (API) + synced codebase (Git/CD).
+- **Stateless design:** Sessions stored in **Redis** (optional).
+
+### 4. **Database (MySQL + ProxySQL)**
+| Node       | Role |
+|------------|------|
+| **Primary** | Handles all writes (`INSERT/UPDATE/DELETE`) |
+| **Replica** | Handles read-only queries (`SELECT`) |
+| **ProxySQL** | Routes queries intelligently (writes → Primary, reads → Replica) |
+- **Auto-failover:** If Primary crashes, ProxySQL promotes Replica.
+
+### 5. **Security**
+- 🔒 **HTTPS** (Let’s Encrypt SSL/TLS on Nginx/HAProxy).
+- 🛡️ **Firewall rules** (only allows `80, 443, 22, 3306`).
+- ⚡ **DDoS Protection** (Cloudflare/AWS Shield).
+
+### 6. **Monitoring & Logging**
+- 📊 **Prometheus + Grafana** (real-time metrics: CPU, RAM, DB queries).
+- 📜 **ELK Stack** (centralized logs: Elasticsearch, Logstash, Kibana).
+- 🔔 **Uptime Robot** (alerts for downtime).
+
+---
+
+## ✅ **Advantages Over Single-Server Setup**
+✔ **No Single Point of Failure (SPOF)**  
+✔ **Scalability** (Auto-scaling, read/write splitting)  
+✔ **Improved Security** (HTTPS, Firewalls, DDoS protection)  
+✔ **Observability** (Monitoring + Logging)  
+
+---
+
+## 🚀 **Future Improvements**
+- **CDN Integration** (Cloudflare/AWS CloudFront) → Faster static content.  
+- **Redis/Memcached** → Cache frequent DB queries.  
+- **Kubernetes (EKS/GKE)** → Auto-scaling & zero-downtime deployments.  
+- **Multi-Region Deployment** → Better disaster recovery.  
+
+---
+
+## 📝 **Usage**
+1. Clone this repo (if applicable).
+2. Deploy using Terraform/Ansible (example scripts below).
+3. Set up monitoring (Grafana dashboard example included).
+
+```bash
+# Example deployment command (adjust as needed)
+terraform apply -auto-approve
