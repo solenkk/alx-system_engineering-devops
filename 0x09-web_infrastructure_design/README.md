@@ -15,7 +15,7 @@ This repository documents the progressive enhancement of a web infrastructure fr
 ![Simple Web Stack Diagram](https://imgur.com/a/R2yHXIp)
 
 ### Architecture
-```mermaid
+
 graph LR
     U[User] --> D[DNS]
     D --> S[Single Server]
